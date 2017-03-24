@@ -1,0 +1,35 @@
+#!/bin/bash
+
+source ../src/common.sh
+
+function updateWitHistoryWithExternalGit_Should_Return_Correct_Url() {
+    local _account="testaccount"
+    local _collection="TestCollection"
+    local _apiVersion="1.0"
+    local _witId="1"
+    local _commitSha="commit-sha"
+    local _commitUrl="commit-url"
+    local _vstsUser="test"
+    local _vstsPass="test"
+
+    expected="curl -u test:test --request PATCH --header \"Content-Type: application/json-patch+json\" --data '[{\"op\": \"add\",\"path\": \"/fields/System.History\",\"value\": \"External Git commit: <a href=\\\"commit-url/commit-sha\\\">commit-sha</a>\" }]' https://testaccount.VisualStudio.com/TestCollection/_apis/wit/workitems/1?api-version=1.0"
+    actual=$(updateWitHistoryWithExternalGit "${_account}" "${_collection}" "${_witId}" "${_apiVersion}" "${_commitSha}" "${_commitUrl}" "${_vstsUser}" "${_vstsPass}")
+
+    # Assert
+    _equals "updateWitHistoryWithExternalGit_Should_Return_Correct_Url" "${expected}" "${actual}"
+}
+
+function _equals() {
+    local _method="${1}"
+    local _expected="${2}"
+    local _actual="${3}"
+
+    if [[ "${_actual}" == "${_expected}" ]]; then
+        echo -e "${_method} \e[32mPassed"
+    else
+        echo -e "${_method} \e[31mFailed"
+        echo "expected result: ${expected} "
+        echo "actual result: ${actual} "
+        exit 1
+    fi
+}
