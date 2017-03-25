@@ -2,21 +2,57 @@
 
 source ../src/common.sh
 
-function updateWitHistoryWithExternalGit_Should_Return_Correct_Url() {
+function updateWitHistoryWithExternalGit_Should_Return_Correct_JSON() {
     local _account="testaccount"
     local _collection="TestCollection"
     local _apiVersion="1.0"
     local _witId="1"
     local _commitSha="commit-sha"
-    local _commitUrl="commit-url"
+    local _cloneUrl="clone-url"
     local _vstsUser="test"
     local _vstsPass="test"
 
-    expected="curl -u test:test --request PATCH --header \"Content-Type: application/json-patch+json\" --data '[{\"op\": \"add\",\"path\": \"/fields/System.History\",\"value\": \"External Git commit: <a href=\\\"commit-url/commit-sha\\\">commit-sha</a>\" }]' https://testaccount.VisualStudio.com/TestCollection/_apis/wit/workitems/1?api-version=1.0"
-    actual=$(updateWitHistoryWithExternalGit "${_account}" "${_collection}" "${_witId}" "${_apiVersion}" "${_commitSha}" "${_commitUrl}" "${_vstsUser}" "${_vstsPass}")
+    expected="{\"id\":\"123\"}"
+
+    # mock curl: fixtures/curl/de3d7d627da0f0367e97d718ee42886c
+    actual=$(updateWitHistoryWithExternalGit "${_account}" "${_collection}" "${_witId}" "${_apiVersion}" "${_commitSha}" "${_cloneUrl}" "${_vstsUser}" "${_vstsPass}")
 
     # Assert
     _equals "updateWitHistoryWithExternalGit_Should_Return_Correct_Url" "${expected}" "${actual}"
+}
+
+function getVstsGitRepoInfo_Should_Return_Correct_JSON() {
+    local _cloneUrl="clone-url"
+    local _vstsUser="test"
+    local _vstsPass="test"
+
+    expected='{"repository": {"id": "123", "project": {"id":"456"}}}'
+
+    # mock curl: fixtures/curl/9003043cb203c5395ff1183ff82deabc
+    actual=$(getVstsGitRepoInfo "${_cloneUrl}" "${_vstsUser}" "${_vstsPass}")
+
+    # Assert
+    _equals "getVstsGitRepoInfo_Should_Return_Correct_JSON" "${expected}" "${actual}"
+}
+
+function updateWitHistoryWithTfsGit_Should_Return_Correct_Result() {
+    local _account="testaccount"
+    local _collection="TestCollection"
+    local _id="1"
+    local _apiVersion="1.0"
+    local _commit="commit"
+    local _cloneUrl="clone-url"
+    local _vstsUser="test"
+    local _vstsPat="test"
+
+    expected='{"id":"001"}'
+
+    # mock curl: fixtures/curl/c142cdf2496a6cee3c13e62ccc698f8b
+    actual=$(updateWitHistoryWithTfsGit "${_account}" "${_collection}" "${_id}" "${_apiVersion}" "${_commit}" "${_cloneUrl}" "${_vstsUser}" "${_vstsPat}")
+
+    # Assert
+    _equals "updateWitHistoryWithTfsGit_Should_Return_Correct_Result" "${expected}" "${actual}"
+
 }
 
 function _equals() {
@@ -24,12 +60,12 @@ function _equals() {
     local _expected="${2}"
     local _actual="${3}"
 
-    if [[ "${_actual}" == "${_expected}" ]]; then
-        echo -e "${_method} \e[32mPassed"
+    if [[ "$_actual" == *"$_expected" ]]; then
+        echo -e "${_method} \e[32mPassed\e[0m"
     else
-        echo -e "${_method} \e[31mFailed"
-        echo "expected result: ${expected} "
-        echo "actual result: ${actual} "
+        echo -e "${_method} \e[31mFailed\e[0m"
+        echo "expected result: ${_expected}"
+        echo "actual result: ${_actual} "
         exit 1
-    fi
+    fi   
 }
