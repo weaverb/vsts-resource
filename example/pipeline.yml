@@ -1,0 +1,29 @@
+---
+resource_types:
+- name: vsts-resource
+  type: docker-image
+  source:
+    repository: bsweaver/vsts-resource
+    tag: latest
+resources:
+  - name: repo
+    type: git
+    source: 
+      uri: ssh://bweaver@bweaver.visualstudio.com:22/DefaultCollection/_git/test-pcf-resource
+      branch: master
+      private_key: {{github-private-key}}
+    check_every: 10s
+  - name: vsts
+    type: vsts-resource
+    
+jobs:
+  - name: link-commit-to-vsts
+    public: true
+    plan:
+      - get: repo
+      - put: vsts
+        params:
+          remote_commit_uri: https://bweaver.visualstudio.com/_git/test-pcf-resource/commit            
+          vsts_account: bweaver
+          vsts_user: {{vsts-user}}
+          vsts_pat: {{vsts-pat}}
