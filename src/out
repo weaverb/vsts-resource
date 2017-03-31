@@ -33,8 +33,8 @@ vsts_api_version=$(jq -r '.params.vsts_api_version // "1.0"' < $payload)
 
 
 if [ -z "$remote_commit_uri" ]; then
-    echo "remote_type other was specified. (missing remote_commit_uri: You must provide a uri for viewing commits)"
-    exit 1
+  echo "invalid payoad (missing remote_commit_uri: You must provide a uri for viewing commits)"
+  exit 1
 fi
 
 if [ -z "$vsts_user" ]; then
@@ -52,20 +52,19 @@ if [ -z "$vsts_account" ]; then
   exit 1
 fi
 
+export VSTS_USER=$vsts_user
+export VSTS_PAT=$vsts_pat
+
 cd $1/repo
 
 commit_sha=$(git log -1 --pretty=format:%H)
-wit_id=$(git log -1 --pretty=format:%s | grep -e '\#[0-9]\+' | grep -e '[0-9]\+')
+wit_id=$(git log -1 --pretty=format:%s | awk '{ for (i=1; i<=NF; i++) if ($i ~ /#[0-9]*/) print substr($i,2,length($i)) }')
 
-if [ -n "$wit_id" ]; then
+if [ -z "$wit_id" ]; then
   echo "No work item id detected.  Nothing to do.  Quitting."
   exit 0
 fi
 
-if [[ ${remote_commit_uri} == *"visualstudio.com"* ]]; then
-    echo "TFS Git repo detected, attaching repo to work item"
-    updateWitHistoryWithTfsGit "${vsts_account}" "${vsts_collection}" "${wit_id}" "${vsts_api_version}" "${commit_sha}" "${remote_commit_uri}"
-else
-    echo "External git repo detected, attaching repo to work item history"
-    updateWitHistoryWithExternalGit "${vsts_account}" "${vsts_collection}" "${wit_id}" "${vsts_api_version}" "${commit_sha}" "${remote_commit_uri}"
-fi
+echo "External git repo detected, attaching repo to work item history"
+updateWitHistoryWithExternalGit "${vsts_account}" "${vsts_collection}" "${wit_id}" "${vsts_api_version}" "${commit_sha}" "${remote_commit_uri}"
+
