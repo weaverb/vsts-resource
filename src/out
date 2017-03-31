@@ -68,3 +68,7 @@ fi
 echo "External git repo detected, attaching repo to work item history"
 updateWitHistoryWithExternalGit "${vsts_account}" "${vsts_collection}" "${wit_id}" "${vsts_api_version}" "${commit_sha}" "${remote_commit_uri}"
 
+jq -n "{
+  version: { ref: $(git log -1 --pretty=format:%s| jq -R .) }
+}" >&3
+

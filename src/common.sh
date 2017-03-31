@@ -15,7 +15,5 @@ function updateWitHistoryWithExternalGit() {
     local payload='[{"op": "add","path": "/fields/System.History","value": "External Git commit: <a href=\"'${commitUrl}'/'${commit}'\">'${commit}'</a>" }]'
     local url="https://${account}.VisualStudio.com/${collection}/_apis/wit/workitems/${id}?api-version=${apiVersion}"
 
-    echo $header
-
     curl -u ${vstsUser}:${vstsPat} --request PATCH --header "$header" --data "$payload" ${url} | jq .
 }
