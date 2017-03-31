@@ -9,7 +9,7 @@ resources:
   - name: repo
     type: git
     source: 
-      uri: ssh://bweaver@bweaver.visualstudio.com:22/DefaultCollection/_git/test-pcf-resource
+      uri: git@github.com:weaverb/flight-school.git
       branch: master
       private_key: {{github-private-key}}
     check_every: 10s
@@ -23,7 +23,7 @@ jobs:
       - get: repo
       - put: vsts
         params:
-          remote_commit_uri: https://bweaver.visualstudio.com/_git/test-pcf-resource/commit            
+          remote_commit_uri: https://github.com/weaverb/flight-school/commit    
           vsts_account: bweaver
           vsts_user: {{vsts-user}}
           vsts_pat: {{vsts-pat}}
