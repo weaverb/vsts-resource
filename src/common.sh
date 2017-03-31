@@ -17,5 +17,5 @@ function updateWitHistoryWithExternalGit() {
 
     echo $header
 
-    curl -u ${vstsUser}:${vstsPat} --request PATCH --header "$header" --data "$payload" ${url}
+    curl -u ${vstsUser}:${vstsPat} --request PATCH --header "$header" --data "$payload" ${url} | jq .
 }
