@@ -21,39 +21,6 @@ function updateWitHistoryWithExternalGit_Should_Return_Correct_JSON() {
     _equals "updateWitHistoryWithExternalGit_Should_Return_Correct_Url" "${expected}" "${actual}"
 }
 
-function getVstsGitRepoInfo_Should_Return_Correct_JSON() {
-    local _cloneUrl="http://visualstudio.com"
-    local _vstsUser="test"
-    local _vstsPass="test"
-
-    expected='{"repository": {"id": "123", "project": {"id":"456"}}}'
-
-    # mock curl: fixtures/curl/d096fc6f6c3fa3872d32a889dc45e357
-    actual=$(getVstsGitRepoInfo "${_cloneUrl}" "${_vstsUser}" "${_vstsPass}")
-
-    # Assert
-    _equals "getVstsGitRepoInfo_Should_Return_Correct_JSON" "${expected}" "${actual}"
-}
-
-function updateWitHistoryWithTfsGit_Should_Return_Correct_Result() {
-    local _account="testaccount"
-    local _collection="TestCollection"
-    local _id="1"
-    local _apiVersion="1.0"
-    local _commit="commit"
-    local _cloneUrl="http://visualstudio.com"
-    local _vstsUser="test"
-    local _vstsPat="test"
-
-    expected='{"id":"001"}'
-
-    # mock curl: fixtures/curl/c142cdf2496a6cee3c13e62ccc698f8b
-    actual=$(updateWitHistoryWithTfsGit "${_account}" "${_collection}" "${_id}" "${_apiVersion}" "${_commit}" "${_cloneUrl}" "${_vstsUser}" "${_vstsPat}")
-
-    # Assert
-    _equals "updateWitHistoryWithTfsGit_Should_Return_Correct_Result" "${expected}" "${actual}"
-
-}
 
 function _equals() {
     local _method="${1}"
