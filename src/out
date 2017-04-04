@@ -24,12 +24,14 @@ payload=$(mktemp $TMPDIR/vsts-resource-request.XXXXXX)
 
 cat > $payload <&0
 
-remote_commit_uri=$(jq -r '.params.remote_commit_uri // ""' < $payload)
-vsts_user=$(jq -r '.params.vsts_user // ""' < $payload)
-vsts_pat=$(jq -r '.params.vsts_pat // ""' < $payload)
-vsts_account=$(jq -r '.params.vsts_account // ""' < $payload)
-vsts_collection=$(jq -r '.params.vsts_collection // "DefaultCollection"' < $payload)
-vsts_api_version=$(jq -r '.params.vsts_api_version // "1.0"' < $payload)
+remote_commit_uri=$(jq -r '.source.remote_commit_uri // ""' < $payload)
+vsts_user=$(jq -r '.source.vsts_user // ""' < $payload)
+vsts_pat=$(jq -r '.source.vsts_pat // ""' < $payload)
+vsts_account=$(jq -r '.source.vsts_account // ""' < $payload)
+vsts_collection=$(jq -r '.source.vsts_collection // "DefaultCollection"' < $payload)
+vsts_api_version=$(jq -r '.source.vsts_api_version // "1.0"' < $payload)
+curl_ntlm=$(jq -r '.source.curl_ntlm // "false"' < $payload)
+curl_insecure=$(jq -r '.source.curl_insecure // "false"' < $payload)
 
 
 if [ -z "$remote_commit_uri" ]; then
@@ -52,8 +54,19 @@ if [ -z "$vsts_account" ]; then
   exit 1
 fi
 
+curl_options=""
+if [[ "$curl_ntlm" == "true" ]]; then
+  curl_options="--ntlm"
+fi
+
+if [[ "$curl_insecure" == "true" ]]; then
+  curl_options="$curl_options -k"
+fi
+
+
 export VSTS_USER=$vsts_user
 export VSTS_PAT=$vsts_pat
+export CURL_OPTIONS=$curl_options
 
 cd $1/repo
 

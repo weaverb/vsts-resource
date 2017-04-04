@@ -15,15 +15,15 @@ resources:
     check_every: 10s
   - name: vsts
     type: vsts-resource
-    
+    source:
+      remote_commit_uri: https://github.com/weaverb/flight-school/commit    
+      vsts_account: bweaver
+      vsts_user: {{vsts-user}}
+      vsts_pat: {{vsts-pat}}
+
 jobs:
   - name: link-commit-to-vsts
     public: true
     plan:
       - get: repo
       - put: vsts
-        params:
-          remote_commit_uri: https://github.com/weaverb/flight-school/commit    
-          vsts_account: bweaver
-          vsts_user: {{vsts-user}}
-          vsts_pat: {{vsts-pat}}
