@@ -12,13 +12,76 @@ function updateWitHistoryWithExternalGit_Should_Return_Correct_JSON() {
     local _vstsUser="test"
     local _vstsPass="test"
 
-    expected='{"id":"123"}'
+    jq -n '{ "id": "123" }' > expected
 
     # mock curl: fixtures/curl/2969d33f6a429d3c84480d0ee62d83c4
     actual=$(updateWitHistoryWithExternalGit "${_account}" "${_collection}" "${_witId}" "${_apiVersion}" "${_commitSha}" "${_cloneUrl}" "${_vstsUser}" "${_vstsPass}")
-
+   
     # Assert
     _equals "updateWitHistoryWithExternalGit_Should_Return_Correct_Url" "${expected}" "${actual}"
+}
+
+function updateWitHistoryWithExternalGit_Should_Return_Correct_JSON_Curl_Insecure() {
+    local _account="testaccount"
+    local _collection="TestCollection"
+    local _apiVersion="1.0"
+    local _witId="1"
+    local _commitSha="commit-sha"
+    local _cloneUrl="http://www.google.com"
+    local _vstsUser="test"
+    local _vstsPass="test"
+
+    export CURL_OPTIONS="-k"
+
+    jq -n '{ "id": "123" }' > expected
+
+    # mock curl: fixtures/curl/f77cc8d2d11b112c076bc4f43bb8166a
+    actual=$(updateWitHistoryWithExternalGit "${_account}" "${_collection}" "${_witId}" "${_apiVersion}" "${_commitSha}" "${_cloneUrl}" "${_vstsUser}" "${_vstsPass}")
+   
+    # Assert
+    _equals "updateWitHistoryWithExternalGit_Should_Return_Correct_JSON_Curl_Insecure" "${expected}" "${actual}"
+}
+
+function updateWitHistoryWithExternalGit_Should_Return_Correct_JSON_Curl_Ntlm() {
+    local _account="testaccount"
+    local _collection="TestCollection"
+    local _apiVersion="1.0"
+    local _witId="1"
+    local _commitSha="commit-sha"
+    local _cloneUrl="http://www.google.com"
+    local _vstsUser="test"
+    local _vstsPass="test"
+
+    export CURL_OPTIONS="--ntlm"
+
+    jq -n '{ "id": "123" }' > expected
+
+    # mock curl: fixtures/curl/ef03d263eea14a7ef60adc0e86b13e09
+    actual=$(updateWitHistoryWithExternalGit "${_account}" "${_collection}" "${_witId}" "${_apiVersion}" "${_commitSha}" "${_cloneUrl}" "${_vstsUser}" "${_vstsPass}")
+   
+    # Assert
+    _equals "updateWitHistoryWithExternalGit_Should_Return_Correct_JSON_Curl_Ntlm" "${expected}" "${actual}"
+}
+
+function updateWitHistoryWithExternalGit_Should_Return_Correct_JSON_Curl_Ntlm_Insecure() {
+    local _account="testaccount"
+    local _collection="TestCollection"
+    local _apiVersion="1.0"
+    local _witId="1"
+    local _commitSha="commit-sha"
+    local _cloneUrl="http://www.google.com"
+    local _vstsUser="test"
+    local _vstsPass="test"
+
+    export CURL_OPTIONS="--ntlm -k"
+
+    jq -n '{ "id": "123" }' > expected
+
+    # mock curl: fixtures/curl/bf1d47f3643a86cd6c0025b25cc1f222
+    actual=$(updateWitHistoryWithExternalGit "${_account}" "${_collection}" "${_witId}" "${_apiVersion}" "${_commitSha}" "${_cloneUrl}" "${_vstsUser}" "${_vstsPass}")
+   
+    # Assert
+    _equals "updateWitHistoryWithExternalGit_Should_Return_Correct_JSON_Curl_Ntlm_Insecure" "${expected}" "${actual}"
 }
 
 
