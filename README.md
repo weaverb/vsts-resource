@@ -60,15 +60,15 @@ Basic resource configuration for linking a GitHub commit to a VSTS work item:
 
 ## Behavior
 
-### `check`: Check for new commits.
+### `check`: 
 
 Not used currently
 
-### `in`: Clone the repository, at the given ref.
+### `in`: 
 
 Not used currently
 
-### `out`: Push to a repository.
+### `out`: Push hyperlink to the commit to VSTS
 
 When triggered the resource will scan the latest commit message from the git repo looking for a work item id number prefixed with a `#` (e.g. `#177`).  If found, a hyperlink will be added to the history field of the work item for the target Collection and Project.
 
